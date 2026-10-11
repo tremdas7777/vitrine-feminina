@@ -10,33 +10,323 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as BuscaRouteImport } from './routes/busca'
+import { Route as CheckoutRouteImport } from './routes/checkout'
+import { Route as ContatoRouteImport } from './routes/contato'
+import { Route as FaqRouteImport } from './routes/faq'
+import { Route as FavoritosRouteImport } from './routes/favoritos'
+import { Route as PoliticaEnvioRouteImport } from './routes/politica-envio'
+import { Route as PoliticaPrivacidadeRouteImport } from './routes/politica-privacidade'
+import { Route as PoliticaReembolsoRouteImport } from './routes/politica-reembolso'
+import { Route as RastreioRouteImport } from './routes/rastreio'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as SobreRouteImport } from './routes/sobre'
+import { Route as ColecaoColRouteImport } from './routes/colecao.$col'
+import { Route as ExpressoIdRouteImport } from './routes/expresso.$id'
+import { Route as MarcaBrandRouteImport } from './routes/marca.$brand'
+import { Route as ObrigadoIdRouteImport } from './routes/obrigado.$id'
+import { Route as PSlugRouteImport } from './routes/p.$slug'
+import { Route as PedidoIdRouteImport } from './routes/pedido.$id'
+import { Route as UpsellIdRouteImport } from './routes/upsell.$id'
+import { Route as ApiPublicPixWebhookRouteImport } from './routes/api/public/pix-webhook'
+import { Route as CCatIndexRouteImport } from './routes/c.$cat.index'
+import { Route as CCatSubRouteImport } from './routes/c.$cat.$sub'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BuscaRoute = BuscaRouteImport.update({
+  id: '/busca',
+  path: '/busca',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CheckoutRoute = CheckoutRouteImport.update({
+  id: '/checkout',
+  path: '/checkout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContatoRoute = ContatoRouteImport.update({
+  id: '/contato',
+  path: '/contato',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FaqRoute = FaqRouteImport.update({
+  id: '/faq',
+  path: '/faq',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FavoritosRoute = FavoritosRouteImport.update({
+  id: '/favoritos',
+  path: '/favoritos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PoliticaEnvioRoute = PoliticaEnvioRouteImport.update({
+  id: '/politica-envio',
+  path: '/politica-envio',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PoliticaPrivacidadeRoute = PoliticaPrivacidadeRouteImport.update({
+  id: '/politica-privacidade',
+  path: '/politica-privacidade',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PoliticaReembolsoRoute = PoliticaReembolsoRouteImport.update({
+  id: '/politica-reembolso',
+  path: '/politica-reembolso',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RastreioRoute = RastreioRouteImport.update({
+  id: '/rastreio',
+  path: '/rastreio',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SobreRoute = SobreRouteImport.update({
+  id: '/sobre',
+  path: '/sobre',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ColecaoColRoute = ColecaoColRouteImport.update({
+  id: '/colecao/$col',
+  path: '/colecao/$col',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExpressoIdRoute = ExpressoIdRouteImport.update({
+  id: '/expresso/$id',
+  path: '/expresso/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MarcaBrandRoute = MarcaBrandRouteImport.update({
+  id: '/marca/$brand',
+  path: '/marca/$brand',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ObrigadoIdRoute = ObrigadoIdRouteImport.update({
+  id: '/obrigado/$id',
+  path: '/obrigado/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PSlugRoute = PSlugRouteImport.update({
+  id: '/p/$slug',
+  path: '/p/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PedidoIdRoute = PedidoIdRouteImport.update({
+  id: '/pedido/$id',
+  path: '/pedido/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UpsellIdRoute = UpsellIdRouteImport.update({
+  id: '/upsell/$id',
+  path: '/upsell/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicPixWebhookRoute = ApiPublicPixWebhookRouteImport.update({
+  id: '/api/public/pix-webhook',
+  path: '/api/public/pix-webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CCatIndexRoute = CCatIndexRouteImport.update({
+  id: '/c/$cat/',
+  path: '/c/$cat/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CCatSubRoute = CCatSubRouteImport.update({
+  id: '/c/$cat/$sub',
+  path: '/c/$cat/$sub',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/busca': typeof BuscaRoute
+  '/checkout': typeof CheckoutRoute
+  '/contato': typeof ContatoRoute
+  '/faq': typeof FaqRoute
+  '/favoritos': typeof FavoritosRoute
+  '/politica-envio': typeof PoliticaEnvioRoute
+  '/politica-privacidade': typeof PoliticaPrivacidadeRoute
+  '/politica-reembolso': typeof PoliticaReembolsoRoute
+  '/rastreio': typeof RastreioRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/sobre': typeof SobreRoute
+  '/colecao/$col': typeof ColecaoColRoute
+  '/expresso/$id': typeof ExpressoIdRoute
+  '/marca/$brand': typeof MarcaBrandRoute
+  '/obrigado/$id': typeof ObrigadoIdRoute
+  '/p/$slug': typeof PSlugRoute
+  '/pedido/$id': typeof PedidoIdRoute
+  '/upsell/$id': typeof UpsellIdRoute
+  '/api/public/pix-webhook': typeof ApiPublicPixWebhookRoute
+  '/c/$cat/$sub': typeof CCatSubRoute
+  '/c/$cat/': typeof CCatIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/busca': typeof BuscaRoute
+  '/checkout': typeof CheckoutRoute
+  '/contato': typeof ContatoRoute
+  '/faq': typeof FaqRoute
+  '/favoritos': typeof FavoritosRoute
+  '/politica-envio': typeof PoliticaEnvioRoute
+  '/politica-privacidade': typeof PoliticaPrivacidadeRoute
+  '/politica-reembolso': typeof PoliticaReembolsoRoute
+  '/rastreio': typeof RastreioRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/sobre': typeof SobreRoute
+  '/colecao/$col': typeof ColecaoColRoute
+  '/expresso/$id': typeof ExpressoIdRoute
+  '/marca/$brand': typeof MarcaBrandRoute
+  '/obrigado/$id': typeof ObrigadoIdRoute
+  '/p/$slug': typeof PSlugRoute
+  '/pedido/$id': typeof PedidoIdRoute
+  '/upsell/$id': typeof UpsellIdRoute
+  '/api/public/pix-webhook': typeof ApiPublicPixWebhookRoute
+  '/c/$cat/$sub': typeof CCatSubRoute
+  '/c/$cat': typeof CCatIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/busca': typeof BuscaRoute
+  '/checkout': typeof CheckoutRoute
+  '/contato': typeof ContatoRoute
+  '/faq': typeof FaqRoute
+  '/favoritos': typeof FavoritosRoute
+  '/politica-envio': typeof PoliticaEnvioRoute
+  '/politica-privacidade': typeof PoliticaPrivacidadeRoute
+  '/politica-reembolso': typeof PoliticaReembolsoRoute
+  '/rastreio': typeof RastreioRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/sobre': typeof SobreRoute
+  '/colecao/$col': typeof ColecaoColRoute
+  '/expresso/$id': typeof ExpressoIdRoute
+  '/marca/$brand': typeof MarcaBrandRoute
+  '/obrigado/$id': typeof ObrigadoIdRoute
+  '/p/$slug': typeof PSlugRoute
+  '/pedido/$id': typeof PedidoIdRoute
+  '/upsell/$id': typeof UpsellIdRoute
+  '/api/public/pix-webhook': typeof ApiPublicPixWebhookRoute
+  '/c/$cat/$sub': typeof CCatSubRoute
+  '/c/$cat/': typeof CCatIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/busca'
+    | '/checkout'
+    | '/contato'
+    | '/faq'
+    | '/favoritos'
+    | '/politica-envio'
+    | '/politica-privacidade'
+    | '/politica-reembolso'
+    | '/rastreio'
+    | '/sitemap.xml'
+    | '/sobre'
+    | '/colecao/$col'
+    | '/expresso/$id'
+    | '/marca/$brand'
+    | '/obrigado/$id'
+    | '/p/$slug'
+    | '/pedido/$id'
+    | '/upsell/$id'
+    | '/api/public/pix-webhook'
+    | '/c/$cat/$sub'
+    | '/c/$cat/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/admin'
+    | '/busca'
+    | '/checkout'
+    | '/contato'
+    | '/faq'
+    | '/favoritos'
+    | '/politica-envio'
+    | '/politica-privacidade'
+    | '/politica-reembolso'
+    | '/rastreio'
+    | '/sitemap.xml'
+    | '/sobre'
+    | '/colecao/$col'
+    | '/expresso/$id'
+    | '/marca/$brand'
+    | '/obrigado/$id'
+    | '/p/$slug'
+    | '/pedido/$id'
+    | '/upsell/$id'
+    | '/api/public/pix-webhook'
+    | '/c/$cat/$sub'
+    | '/c/$cat'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/busca'
+    | '/checkout'
+    | '/contato'
+    | '/faq'
+    | '/favoritos'
+    | '/politica-envio'
+    | '/politica-privacidade'
+    | '/politica-reembolso'
+    | '/rastreio'
+    | '/sitemap.xml'
+    | '/sobre'
+    | '/colecao/$col'
+    | '/expresso/$id'
+    | '/marca/$brand'
+    | '/obrigado/$id'
+    | '/p/$slug'
+    | '/pedido/$id'
+    | '/upsell/$id'
+    | '/api/public/pix-webhook'
+    | '/c/$cat/$sub'
+    | '/c/$cat/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRoute
+  BuscaRoute: typeof BuscaRoute
+  CheckoutRoute: typeof CheckoutRoute
+  ContatoRoute: typeof ContatoRoute
+  FaqRoute: typeof FaqRoute
+  FavoritosRoute: typeof FavoritosRoute
+  PoliticaEnvioRoute: typeof PoliticaEnvioRoute
+  PoliticaPrivacidadeRoute: typeof PoliticaPrivacidadeRoute
+  PoliticaReembolsoRoute: typeof PoliticaReembolsoRoute
+  RastreioRoute: typeof RastreioRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  SobreRoute: typeof SobreRoute
+  ColecaoColRoute: typeof ColecaoColRoute
+  ExpressoIdRoute: typeof ExpressoIdRoute
+  MarcaBrandRoute: typeof MarcaBrandRoute
+  ObrigadoIdRoute: typeof ObrigadoIdRoute
+  PSlugRoute: typeof PSlugRoute
+  PedidoIdRoute: typeof PedidoIdRoute
+  UpsellIdRoute: typeof UpsellIdRoute
+  ApiPublicPixWebhookRoute: typeof ApiPublicPixWebhookRoute
+  CCatSubRoute: typeof CCatSubRoute
+  CCatIndexRoute: typeof CCatIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +338,187 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/busca': {
+      id: '/busca'
+      path: '/busca'
+      fullPath: '/busca'
+      preLoaderRoute: typeof BuscaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/checkout': {
+      id: '/checkout'
+      path: '/checkout'
+      fullPath: '/checkout'
+      preLoaderRoute: typeof CheckoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contato': {
+      id: '/contato'
+      path: '/contato'
+      fullPath: '/contato'
+      preLoaderRoute: typeof ContatoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/faq': {
+      id: '/faq'
+      path: '/faq'
+      fullPath: '/faq'
+      preLoaderRoute: typeof FaqRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/favoritos': {
+      id: '/favoritos'
+      path: '/favoritos'
+      fullPath: '/favoritos'
+      preLoaderRoute: typeof FavoritosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/politica-envio': {
+      id: '/politica-envio'
+      path: '/politica-envio'
+      fullPath: '/politica-envio'
+      preLoaderRoute: typeof PoliticaEnvioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/politica-privacidade': {
+      id: '/politica-privacidade'
+      path: '/politica-privacidade'
+      fullPath: '/politica-privacidade'
+      preLoaderRoute: typeof PoliticaPrivacidadeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/politica-reembolso': {
+      id: '/politica-reembolso'
+      path: '/politica-reembolso'
+      fullPath: '/politica-reembolso'
+      preLoaderRoute: typeof PoliticaReembolsoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rastreio': {
+      id: '/rastreio'
+      path: '/rastreio'
+      fullPath: '/rastreio'
+      preLoaderRoute: typeof RastreioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sobre': {
+      id: '/sobre'
+      path: '/sobre'
+      fullPath: '/sobre'
+      preLoaderRoute: typeof SobreRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/colecao/$col': {
+      id: '/colecao/$col'
+      path: '/colecao/$col'
+      fullPath: '/colecao/$col'
+      preLoaderRoute: typeof ColecaoColRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/expresso/$id': {
+      id: '/expresso/$id'
+      path: '/expresso/$id'
+      fullPath: '/expresso/$id'
+      preLoaderRoute: typeof ExpressoIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/marca/$brand': {
+      id: '/marca/$brand'
+      path: '/marca/$brand'
+      fullPath: '/marca/$brand'
+      preLoaderRoute: typeof MarcaBrandRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/obrigado/$id': {
+      id: '/obrigado/$id'
+      path: '/obrigado/$id'
+      fullPath: '/obrigado/$id'
+      preLoaderRoute: typeof ObrigadoIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/p/$slug': {
+      id: '/p/$slug'
+      path: '/p/$slug'
+      fullPath: '/p/$slug'
+      preLoaderRoute: typeof PSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pedido/$id': {
+      id: '/pedido/$id'
+      path: '/pedido/$id'
+      fullPath: '/pedido/$id'
+      preLoaderRoute: typeof PedidoIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/upsell/$id': {
+      id: '/upsell/$id'
+      path: '/upsell/$id'
+      fullPath: '/upsell/$id'
+      preLoaderRoute: typeof UpsellIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/pix-webhook': {
+      id: '/api/public/pix-webhook'
+      path: '/api/public/pix-webhook'
+      fullPath: '/api/public/pix-webhook'
+      preLoaderRoute: typeof ApiPublicPixWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/c/$cat/': {
+      id: '/c/$cat/'
+      path: '/c/$cat'
+      fullPath: '/c/$cat/'
+      preLoaderRoute: typeof CCatIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/c/$cat/$sub': {
+      id: '/c/$cat/$sub'
+      path: '/c/$cat/$sub'
+      fullPath: '/c/$cat/$sub'
+      preLoaderRoute: typeof CCatSubRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRoute,
+  BuscaRoute: BuscaRoute,
+  CheckoutRoute: CheckoutRoute,
+  ContatoRoute: ContatoRoute,
+  FaqRoute: FaqRoute,
+  FavoritosRoute: FavoritosRoute,
+  PoliticaEnvioRoute: PoliticaEnvioRoute,
+  PoliticaPrivacidadeRoute: PoliticaPrivacidadeRoute,
+  PoliticaReembolsoRoute: PoliticaReembolsoRoute,
+  RastreioRoute: RastreioRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
+  SobreRoute: SobreRoute,
+  ColecaoColRoute: ColecaoColRoute,
+  ExpressoIdRoute: ExpressoIdRoute,
+  MarcaBrandRoute: MarcaBrandRoute,
+  ObrigadoIdRoute: ObrigadoIdRoute,
+  PSlugRoute: PSlugRoute,
+  PedidoIdRoute: PedidoIdRoute,
+  UpsellIdRoute: UpsellIdRoute,
+  ApiPublicPixWebhookRoute: ApiPublicPixWebhookRoute,
+  CCatSubRoute: CCatSubRoute,
+  CCatIndexRoute: CCatIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

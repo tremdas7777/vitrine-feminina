@@ -1,17 +1,25 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
+import { StoreLayout } from "@/components/store/StoreLayout";
+import { Home } from "@/components/store/Home";
 
-// A loja (HTML/CSS/JS) fica em public/loja e é servida como arquivo estático.
-const STORE_URL = "/loja/index.html";
+const TITLE = "Vitrine Feminina | Calçados, Bolsas e Acessórios";
+const DESCRIPTION =
+  "Sandálias, tênis, sapatilhas, botas, scarpins e bolsas das melhores marcas: Beira Rio, Modare, Petite Jolie, Moleca, Vizzano e muito mais. Tênis a partir de R$ 49.";
 
 export const Route = createFileRoute("/")({
-  beforeLoad: () => {
-    throw redirect({ href: STORE_URL, reloadDocument: true });
-  },
-  component: Index,
+  head: () => ({
+    meta: [
+      { title: TITLE },
+      { name: "description", content: DESCRIPTION },
+      { property: "og:title", content: TITLE },
+      { property: "og:description", content: DESCRIPTION },
+      { property: "og:url", content: "/" },
+    ],
+    links: [{ rel: "canonical", href: "/" }],
+  }),
+  component: () => (
+    <StoreLayout>
+      <Home />
+    </StoreLayout>
+  ),
 });
-
-function Index() {
-  return (
-    <meta httpEquiv="refresh" content={`0; url=${STORE_URL}`} />
-  );
-}

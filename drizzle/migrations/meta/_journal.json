@@ -1,0 +1,41 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1791427281069,
+      "tag": "0000_create_funnel_events",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1791427286925,
+      "tag": "0001_create_site_settings",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791427292722,
+      "tag": "0002_create_private_settings",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1791427298333,
+      "tag": "0003_create_pix_orders",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1791427308874,
+      "tag": "0004_pix_orders_report_result",
+      "breakpoints": true
+    }
+  ]
+}

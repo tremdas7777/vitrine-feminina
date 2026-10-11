@@ -1,4 +1,4 @@
-import json, re, html, sys, unicodedata
+import json, os, re, html, sys, unicodedata
 
 DL, OUT = sys.argv[1], sys.argv[2]
 
@@ -253,9 +253,28 @@ banners = [
     "https://samisapatilhasecia.com.br/wp-content/uploads/2026/06/chatgpt-image-2-de-jun.-de-2026-18-17-5-1500x630.jpg",
 ]
 
+# catalog.json vai para o navegador (sem textos longos); descriptions.json só o servidor lê.
+texts = {p["slug"]: {"short": p.pop("short"), "desc": p.pop("desc")} for p in products}
+IMG_BASE = "https://samisapatilhasecia.com.br/wp-content/uploads/"
+
+
+def compact_imgs(imgs):
+    """Caminho relativo a IMG_BASE; a miniatura só vai junto quando não dá para deduzir da grande."""
+    out = []
+    for im in imgs:
+        big, small = im["l"].replace(IMG_BASE, ""), im["s"].replace(IMG_BASE, "")
+        out.append(big if small == big.replace("-800x800.", "-449x449.") else [big, small])
+    return out
+
+
+for p in products:
+    p["imgs"] = compact_imgs(p["imgs"])
 data = {"categories": cats, "products": products, "banners": banners}
-with open(OUT, "w", encoding="utf-8") as f:
-    f.write("window.STORE=" + json.dumps(data, ensure_ascii=False, separators=(",", ":")) + ";\n")
+os.makedirs(OUT, exist_ok=True)
+with open(os.path.join(OUT, "catalog.json"), "w", encoding="utf-8") as f:
+    json.dump(data, f, ensure_ascii=False, separators=(",", ":"))
+with open(os.path.join(OUT, "descriptions.json"), "w", encoding="utf-8") as f:
+    json.dump(texts, f, ensure_ascii=False, separators=(",", ":"))
 
 for c in cats:
     print(c["name"], c["count"], [(s["name"], s["count"]) for s in c["subs"]])
