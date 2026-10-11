@@ -8,5 +8,5 @@ for p in 1 2 3; do
   curl -sL "$API?per_page=100&page=$p" -o "$TMP/p$p.json"
   curl -sL "$API?per_page=100&page=$p&orderby=popularity&order=desc&_fields=id" -o "$TMP/pop$p.json"
 done
-python3 -I "$DIR/build_catalogo.py" "$TMP" "$DIR/../data/products.js"
+python3 -I "$DIR/build_catalogo.py" "$TMP" "$DIR/../public/loja/data/products.js"
 rm -rf "$TMP"
