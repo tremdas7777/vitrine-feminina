@@ -9,6 +9,14 @@
   const KIT_UNITS = 3;
 
   const { categories: CATS, products: ALL, banners: BANNERS } = window.STORE;
+  // promoções por categoria: preço fixo da unidade e preço do kit com 3
+  const PROMOS = { tenis: { price: 69.9, kit: 129.9 } };
+  ALL.forEach(p => {
+    const pr = PROMOS[p.cat]; if (!pr) return;
+    const orig = p.regular || p.price;
+    p.price = pr.price;
+    p.regular = orig > pr.price ? orig : null;
+  });
   const BY_SLUG = new Map(ALL.map(p => [p.slug, p]));
   const BY_ID = new Map(ALL.map(p => [p.id, p]));
   const CAT = new Map(CATS.map(c => [c.slug, c]));
@@ -62,11 +70,13 @@
   const topRank = new Map(bestSellers.slice(0, 50).map((p, i) => [p.id, i + 1]));
 
   // kit 3 unidades: produtos com mais de uma cor, quando o kit sai mais barato que 3 avulsos
-  const hasKit = p => p.inStock && p.colors.length > 1 && p.price * KIT_UNITS > KIT_PRICE;
-  const unitPrice = i => (i.kit ? KIT_PRICE : BY_ID.get(i.id)?.price || 0);
+  const kitPrice = p => PROMOS[p.cat]?.kit ?? KIT_PRICE;
+  const hasKit = p => p.inStock && (!!PROMOS[p.cat] || p.colors.length > 1) && p.price * KIT_UNITS > kitPrice(p);
+  const unitPrice = i => (i.kit ? kitPrice(BY_ID.get(i.id)) : BY_ID.get(i.id)?.price || 0);
+  const moneyShort = v => (Number.isInteger(v) ? `R$ ${v}` : money(v));
 
   const COLLECTIONS = {
-    "kits": { name: `Kit ${KIT_UNITS} por ${money(KIT_PRICE)}`, sub: "Leve 3 unidades e escolha a cor e a numeração de cada uma.", filter: hasKit, sort: "vendidos" },
+    "kits": { name: "Kits com 3 unidades", sub: `Leve 3 e escolha a cor e a numeração de cada uma: ${moneyShort(KIT_PRICE)} nos modelos com mais de uma cor e ${money(PROMOS.tenis.kit)} em qualquer tênis.`, filter: hasKit, sort: "vendidos" },
     "mais-vendidos": { name: "Mais Vendidos", sub: "Os queridinhos das nossas clientes — ranking atualizado pelas vendas da loja.", filter: p => p.inStock, sort: "vendidos" },
     "novidades": { name: "Novidades", sub: "Acabaram de chegar na Vitrine.", filter: () => true, sort: "novos" },
     "ofertas": { name: "Ofertas & Achadinhos", sub: "Produtos em promoção e achadinhos até R$ 99,90.", filter: p => p.inStock && (p.regular || p.price < 100), sort: "preco-asc" },
@@ -137,7 +147,7 @@
     else {
       if (p.regular) tags.push(`<span class="tag tag--sale">-${Math.round((1 - p.price / p.regular) * 100)}%</span>`);
       if (TOP_IDS.has(p.id) && !opts.ranked) tags.push(`<span class="tag tag--best">Mais vendido</span>`);
-      if (hasKit(p)) tags.push(`<span class="tag tag--kit">Kit 3 por R$ 99</span>`);
+      if (hasKit(p)) tags.push(`<span class="tag tag--kit">Kit 3 por ${moneyShort(kitPrice(p))}</span>`);
       if (p.comfort && tags.length < 2) tags.push(`<span class="tag tag--comfort">Conforto</span>`);
     }
     const second = p.imgs[1] ? img(p.imgs[1].s, p.name, "alt") : "";
@@ -156,7 +166,7 @@
         <a class="card__name" href="#/p/${p.slug}">${esc(p.name)}</a>
         ${dots ? `<div class="card__colors">${dots}<span>${more}</span></div>` : ""}
         ${priceHtml(p)}
-        ${hasKit(p) ? `<span class="card__kit">ou <b>3 por ${money(KIT_PRICE)}</b></span>` : ""}
+        ${hasKit(p) ? `<span class="card__kit">ou <b>3 por ${money(kitPrice(p))}</b></span>` : ""}
       </div>
     </article>`;
   }
@@ -220,7 +230,7 @@
     <section class="section">
       <div class="container">
         <div class="kit-band">
-          <div><span class="eyebrow" style="color:#fff">Monte o seu</span><h2 class="title">Kit com 3 por <em>${money(KIT_PRICE)}</em></h2><p>Escolha a cor e a numeração de cada unidade. Válido para todos os modelos com mais de uma cor.</p></div>
+          <div><span class="eyebrow" style="color:#fff">Monte o seu</span><h2 class="title">Kit com 3 por <em>${money(KIT_PRICE)}</em></h2><p>Escolha a cor e a numeração de cada unidade. Válido para todos os modelos com mais de uma cor. <b>Tênis: 1 por ${money(PROMOS.tenis.price)} ou 3 por ${money(PROMOS.tenis.kit)}.</b></p></div>
           <a class="btn" href="#/colecao/kits">Montar meu kit →</a>
         </div>
         ${rail(bestSellers.filter(hasKit).slice(0, 12))}
@@ -282,11 +292,16 @@
   const SORTS = [["vendidos", "Mais vendidos"], ["novos", "Novidades"], ["preco-asc", "Menor preço"], ["preco-desc", "Maior preço"], ["az", "A – Z"]];
   const list = v => (v ? String(v).split(",").filter(Boolean) : []);
 
-  function sortItems(items, s) {
+  // marcas que aparecem primeiro na ordem padrão de uma categoria
+  const PINNED_BRANDS = { tenis: ["Modare"] };
+
+  function sortItems(items, s, cat) {
     const out = [...items];
     const stockFirst = (a, b) => (b.inStock - a.inStock);
+    const pinned = PINNED_BRANDS[cat] || [];
+    const pin = p => { const i = pinned.indexOf(p.brand); return i === -1 ? pinned.length : i; };
     const fn = {
-      vendidos: (a, b) => stockFirst(a, b) || a.rank - b.rank,
+      vendidos: (a, b) => stockFirst(a, b) || pin(a) - pin(b) || a.rank - b.rank,
       novos: (a, b) => stockFirst(a, b) || b.id - a.id,
       "preco-asc": (a, b) => stockFirst(a, b) || a.price - b.price,
       "preco-desc": (a, b) => stockFirst(a, b) || b.price - a.price,
@@ -336,7 +351,7 @@
 
     const defaultSort = ctx.col ? COLLECTIONS[ctx.col].sort : "vendidos";
     const sort = q.ordem || defaultSort;
-    const filtered = sortItems(applyFilters(base), sort);
+    const filtered = sortItems(applyFilters(base), sort, ctx.cat);
 
     const key = JSON.stringify([ctx, q]);
     if (key !== lastListKey) { listLimit = PAGE; lastListKey = key; }
@@ -426,7 +441,7 @@
     const kit = hasKit(p);
     const modes = kit ? `<div class="modes" role="radiogroup" aria-label="Como você quer comprar">
         <button class="mode is-active" data-mode="single" role="radio" aria-checked="true"><b>1 unidade</b><span>${money(p.price)}</span><small>Escolha cor e tamanho</small></button>
-        <button class="mode" data-mode="kit" role="radio" aria-checked="false"><em>Economize ${money(p.price * KIT_UNITS - KIT_PRICE)}</em><b>Kit com ${KIT_UNITS} unidades</b><span>${money(KIT_PRICE)}</span><small>${money(KIT_PRICE / KIT_UNITS)} cada · cor e nº à sua escolha</small></button>
+        <button class="mode" data-mode="kit" role="radio" aria-checked="false"><em>Economize ${money(p.price * KIT_UNITS - kitPrice(p))}</em><b>Kit com ${KIT_UNITS} unidades</b><span>${money(kitPrice(p))}</span><small>${money(kitPrice(p) / KIT_UNITS)} cada · cor e nº à sua escolha</small></button>
       </div>` : "";
     const kitOpts = kit ? `<div class="kit-units" id="kitOpts" hidden>
         <div class="opt__label"><span>Monte seu kit: escolha <b>cor${p.sizes.length ? " e tamanho" : ""}</b> de cada unidade</span></div>
@@ -527,7 +542,7 @@
       </div></div></li>`).join("");
     $("#nav").innerHTML = `<ul class="nav__list">
       <li class="nav__item"><a class="nav__link nav__link--hot" data-nav="colecao/mais-vendidos" href="#/colecao/mais-vendidos">Mais Vendidos</a></li>
-      <li class="nav__item"><a class="nav__link nav__link--kit" data-nav="colecao/kits" href="#/colecao/kits">Kit 3 por 99</a></li>
+      <li class="nav__item"><a class="nav__link nav__link--kit" data-nav="colecao/kits" href="#/colecao/kits">Kits 3 un.</a></li>
       ${items}
       <li class="nav__item"><span class="nav__link" tabindex="0" style="cursor:default">Marcas</span>
         <div class="mega mega--brands"><div class="mega__inner"><div><h4>Todas as marcas</h4><div class="brand-grid">${BRANDS.map(b => `<a href="#/marca/${b.slug}">${esc(b.name)}<small>${b.count} produtos</small></a>`).join("")}</div></div></div></div></li>
@@ -536,7 +551,7 @@
 
     $("#mobileMenu").innerHTML = `
       <div class="mm-section"><a class="mm-hot" href="#/colecao/mais-vendidos">★ Mais Vendidos</a></div>
-      <div class="mm-section"><a class="mm-hot" href="#/colecao/kits">Kit 3 por ${money(KIT_PRICE)}</a></div>
+      <div class="mm-section"><a class="mm-hot" href="#/colecao/kits">Kits com 3 unidades</a></div>
       <div class="mm-section"><a href="#/colecao/novidades">Novidades</a></div>
       ${CATS.map(c => `<div class="mm-section"><button>${esc(c.name)}</button><div class="mm-sub"><a href="#/c/${c.slug}"><b>Ver tudo</b><small>${c.count}</small></a>${c.subs.map(s => `<a href="#/c/${c.slug}/${s.slug}">${esc(s.name)}<small>${s.count}</small></a>`).join("")}</div></div>`).join("")}
       <div class="mm-section"><button>Marcas</button><div class="mm-sub">${BRANDS.map(b => `<a href="#/marca/${b.slug}">${esc(b.name)}<small>${b.count}</small></a>`).join("")}</div></div>
@@ -553,7 +568,7 @@
         <p class="footer__about">Calçados femininos, bolsas e acessórios das marcas que você ama, com atendimento próximo e carinhoso.</p></div>
       <div><h5>Calçados</h5>${["sandalias", "chinelos", "tenis", "sapatilhas", "sapatos", "botas"].map(s => `<a href="#/c/${s}">${esc(CAT.get(s).name)}</a>`).join("")}</div>
       <div><h5>Bolsas & mais</h5>${CAT.get("bolsas").subs.map(s => `<a href="#/c/bolsas/${s.slug}">${esc(s.name)}</a>`).join("")}<a href="#/c/infantil">Infantil</a></div>
-      <div><h5>Coleções</h5><a href="#/colecao/mais-vendidos">Mais vendidos</a><a href="#/colecao/kits">Kit 3 por R$ 99</a><a href="#/colecao/novidades">Novidades</a><a href="#/colecao/conforto">Linha conforto</a><a href="#/colecao/couro">Couro legítimo</a><a href="#/colecao/ofertas">Ofertas</a></div>
+      <div><h5>Coleções</h5><a href="#/colecao/mais-vendidos">Mais vendidos</a><a href="#/colecao/kits">Kits com 3 unidades</a><a href="#/colecao/novidades">Novidades</a><a href="#/colecao/conforto">Linha conforto</a><a href="#/colecao/couro">Couro legítimo</a><a href="#/colecao/ofertas">Ofertas</a></div>
       <div><h5>Atendimento</h5><a href="https://wa.me/${WHATSAPP}" target="_blank" rel="noopener">WhatsApp (13) 99771-2047</a><a href="${INSTAGRAM}" target="_blank" rel="noopener">Instagram</a><a href="#/colecao/favoritos">Meus favoritos</a></div>`;
     $("#year").textContent = new Date().getFullYear();
     $("#waFloat").href = `https://wa.me/${WHATSAPP}?text=${encodeURIComponent("Olá! Vim pelo site da Vitrine Feminina 💕")}`;
@@ -775,7 +790,7 @@
     $("#singleOpts").hidden = mode === "kit";
     $("#kitOpts").hidden = mode !== "kit";
     $("#pPrice").innerHTML = mode === "kit"
-      ? `<div class="price"><b>${money(KIT_PRICE)}</b><s>${money(p.price * KIT_UNITS)}</s><small>Kit com ${KIT_UNITS} unidades · ${money(KIT_PRICE / KIT_UNITS)} cada</small></div>`
+      ? `<div class="price"><b>${money(kitPrice(p))}</b><s>${money(p.price * KIT_UNITS)}</s><small>Kit com ${KIT_UNITS} unidades · ${money(kitPrice(p) / KIT_UNITS)} cada</small></div>`
       : priceHtml(p);
   }
   function validateSel() {
