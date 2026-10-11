@@ -1,24 +1,43 @@
-# vitrine feminina
+# Vitrine Feminina
 
-vamos fazer a vitrine feminina
+Loja virtual de calçados femininos, bolsas e acessórios: sandálias, chinelos, tênis, sapatilhas, scarpins, mocassins, botas, bolsas e linha infantil.
 
-This project was built with [Lovable](https://lovable.dev).
+Site estático (HTML, CSS e JavaScript puro, sem build), com:
 
-## Build with Lovable
+- 247 produtos organizados em 8 categorias e subcategorias
+- **Mais vendidos**: ranking real de vendas, com carrossel numerado e página própria
+- **Kit 3 por R$ 99** em todos os modelos com mais de uma cor, com cor e tamanho escolhidos para cada unidade
+- Filtros por marca, tamanho, cor e preço, além de busca com sugestões
+- Favoritos, sacola com cupom (`PRIMEIRA10`) e pedido finalizado pelo WhatsApp
 
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/64b0e1ef-eda6-46e6-89de-02a06a29e877).
-
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
-
-## Development
-
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+## Rodar localmente
 
 ```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
-npm run dev
+python3 -m http.server 8080
 ```
+
+Depois é só abrir http://localhost:8080.
+
+## Publicar
+
+Como é um site estático, dá para hospedar direto na Vercel, na Netlify ou no GitHub Pages, sem nenhuma configuração de build.
+
+## Atualizar o catálogo
+
+```sh
+sh tools/atualizar_catalogo.sh
+```
+
+Esse script baixa os produtos da loja WooCommerce de origem e regenera `data/products.js`.
+
+## Estrutura
+
+| Arquivo | Conteúdo |
+|---|---|
+| `index.html` | Estrutura da página |
+| `styles.css` | Visual da loja |
+| `app.js` | Rotas, catálogo, filtros, sacola e kits |
+| `data/products.js` | Catálogo de produtos |
+| `tools/` | Scripts para atualizar o catálogo |
+
+Para trocar o número de WhatsApp, o Instagram, o cupom ou o preço do kit, edite as constantes no topo de `app.js`.
