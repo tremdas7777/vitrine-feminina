@@ -1,8 +1,11 @@
 # Configuração do painel
 - [x] Ativar banco novo e exclusivo no Lovable Cloud.
-- [ ] Aplicar as cinco migrações existentes em ordem e confirmar quatro tabelas.
-- [ ] Solicitar ADMIN_PASSWORD pelo formulário seguro.
-- [ ] Confirmar as cinco variáveis automáticas do Cloud.
-- [ ] Disponibilizar campos opcionais de rastreio sem valores fictícios.
-- [ ] Publicar a versão React atual.
-- [ ] Entrar em /admin e verificar Pedidos, Lucro, Abandonados, Preços e Integrações; informar erros antes de alterar código.
+- [x] Aplicar as cinco migrações existentes em ordem e confirmar quatro tabelas.
+- [x] Solicitar ADMIN_PASSWORD pelo formulário seguro.
+- [x] Confirmar as cinco variáveis automáticas do Cloud.
+- [ ] Campos opcionais de rastreio: formulário oferecido e recusado; Cloud não armazena campos sem valor.
+- [x] Publicar a versão React atual e confirmar /admin público.
+- [x] Entrar em /admin e verificar Pedidos, Lucro, Abandonados, Preços e Integrações; aviso de token Meta ausente informado, sem alterar código.
+- [ ] Solicitar PIXGATE_API_KEY pelo formulário seguro.
+- [ ] Configurar PixGate como principal no painel existente, sem editar código.
+- [ ] Republicar e confirmar “Em uso: PixGate”; testar a chave pelo botão e informar resultado.
