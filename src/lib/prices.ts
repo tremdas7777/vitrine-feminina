@@ -11,7 +11,7 @@
 import { z } from "zod";
 import { PRICING } from "@/lib/catalog";
 import { ORDER_BUMPS } from "@/lib/order-bump";
-import { EXPRESS_SHIPPING, SHIPPING_INSURANCE, UPSELL_OFFER } from "@/lib/upsell";
+import { EXPRESS_SHIPPING, INSOLE_OFFER, SHIPPING_INSURANCE, UPSELL_OFFER } from "@/lib/upsell";
 
 export const PRICES_SETTING_KEY = "prices";
 
@@ -26,6 +26,9 @@ export const priceConfigSchema = z.object({
   kit: money,
   tenis: z.object({ price: money, kit2: money, kit3: money }),
   bump: offer,
+  // Opcionais: configurações salvas antes destas ofertas existirem continuam valendo.
+  bump2: offer.optional(),
+  palmilha: offer.optional(),
   upsellPct: z.number().int().min(1).max(90),
   seguro: money,
   expresso: money,
@@ -36,6 +39,14 @@ export type PriceConfig = z.infer<typeof priceConfigSchema>;
 
 const round = (n: number) => Math.round(n * 100) / 100;
 const bump = () => ORDER_BUMPS[0];
+const bump2 = () => ORDER_BUMPS[1];
+const toOffer = (o: { price: number; compareAt?: number } | undefined): PriceOffer =>
+  o ? { price: o.price, compareAt: o.compareAt ?? null } : { price: 1, compareAt: null };
+const setOffer = (o: { price: number; compareAt?: number } | undefined, v: PriceOffer) => {
+  if (!o) return;
+  o.price = round(v.price);
+  o.compareAt = v.compareAt === null ? undefined : round(v.compareAt);
+};
 
 /** Preços em uso agora (o que a loja exibe e o servidor cobra). */
 export function currentPrices(): PriceConfig {
@@ -49,6 +60,8 @@ export function currentPrices(): PriceConfig {
       kit3: tenis?.kits[3] ?? 99,
     },
     bump: b ? { price: b.price, compareAt: b.compareAt ?? null } : { price: 1, compareAt: null },
+    bump2: toOffer(bump2()),
+    palmilha: toOffer(INSOLE_OFFER),
     upsellPct: UPSELL_OFFER.pct,
     seguro: SHIPPING_INSURANCE.price,
     expresso: EXPRESS_SHIPPING.price,
@@ -76,8 +89,17 @@ export function applyPrices(raw: unknown): PriceConfig {
     bm.price = round(cfg.bump.price);
     bm.compareAt = cfg.bump.compareAt === null ? undefined : round(cfg.bump.compareAt);
   }
+  setOffer(
+    bump2() as { price: number; compareAt?: number } | undefined,
+    cfg.bump2 ?? DEFAULT_PRICES.bump2!,
+  );
+  setOffer(INSOLE_OFFER, cfg.palmilha ?? DEFAULT_PRICES.palmilha!);
   UPSELL_OFFER.pct = cfg.upsellPct;
   SHIPPING_INSURANCE.price = round(cfg.seguro);
   EXPRESS_SHIPPING.price = round(cfg.expresso);
-  return cfg;
+  return {
+    ...cfg,
+    bump2: cfg.bump2 ?? DEFAULT_PRICES.bump2,
+    palmilha: cfg.palmilha ?? DEFAULT_PRICES.palmilha,
+  };
 }

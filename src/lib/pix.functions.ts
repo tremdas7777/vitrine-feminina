@@ -25,7 +25,7 @@ import {
 import { createPix } from "@/lib/pix-gateway.server";
 import { syncPricesFromDb } from "@/lib/prices.server";
 import { isPaidStatus } from "@/lib/pix-status";
-import { UPSELL_PRODUCTS, upsellBaseOf, upsellSelection } from "@/lib/upsell";
+import { INSOLE_OFFER, UPSELL_PRODUCTS, upsellBaseOf, upsellSelection } from "@/lib/upsell";
 import { getRequest } from "@tanstack/react-start/server";
 import { checkoutTotals } from "@/lib/payment-pricing";
 
@@ -246,6 +246,13 @@ export const createUpsellCharge = createServerFn({ method: "POST" })
         frete: { id: "junto", name: `Junto com o pedido ${parent.id}`, price: 0 },
         upsellOf: parent.id,
         upsellItems: sel.products,
+        ...(sel.products.includes("palmilha")
+          ? {
+              extras: sel.items
+                .filter((i) => i.product === "palmilha")
+                .map((i) => ({ id: i.product, name: INSOLE_OFFER.fullName, price: i.price })),
+            }
+          : {}),
         ...(base && sel.products.includes("kit")
           ? {
               items: [

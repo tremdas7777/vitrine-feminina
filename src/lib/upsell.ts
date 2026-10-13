@@ -4,6 +4,7 @@ import type { OrderItem } from "@/lib/cart";
  * Ofertas da tela pós-compra (Pix):
  * - "kit": mais 1 unidade do item principal do pedido (o mais caro), igual — mesma cor e
  *   tamanho, ou o mesmo kit —, com desconto. O id interno continua "kit".
+ * - "palmilha": palmilha de gel (produto físico, vai no envio do upsell).
  * - "seguro": seguro de entrega.
  * - "expresso": envio expresso (página própria, cobrança separada).
  * Desconto e preços editáveis no /admin → Preços.
@@ -28,8 +29,29 @@ export const upsellPrice = (base: OrderItem) =>
   round2(base.unitPrice * (1 - UPSELL_OFFER.pct / 100));
 
 /** Ofertas da tela pós-compra. */
-export const UPSELL_PRODUCTS = ["kit", "seguro", "expresso"] as const;
+export const UPSELL_PRODUCTS = ["kit", "palmilha", "seguro", "expresso"] as const;
 export type UpsellProduct = (typeof UPSELL_PRODUCTS)[number];
+
+/** Palmilha de gel (pós-compra): produto físico, enviado junto com o pedido. */
+export const INSOLE_OFFER: {
+  name: string;
+  fullName: string;
+  gatewayName: string;
+  price: number;
+  compareAt?: number;
+  img: string;
+} = {
+  name: "Palmilha de gel",
+  fullName: "Palmilha ortopédica de gel",
+  /** Nome enviado ao gateway. */
+  gatewayName: UPSELL_GATEWAY_NAME,
+  price: 14.9,
+  compareAt: 24.9,
+  img: "/ofertas/palmilha.svg",
+};
+
+/** Ofertas pós-compra que têm produto físico (geram envio no rastreio). */
+export const PHYSICAL_UPSELLS: readonly UpsellProduct[] = ["kit", "palmilha"];
 
 /** Seguro de entrega (pós-compra): reenvio ou reembolso em caso de extravio ou dano no transporte. */
 export const SHIPPING_INSURANCE = {
@@ -63,7 +85,8 @@ export function upsellSelection(base: OrderItem | null, chosen: readonly string[
         price: upsellPrice(base),
         label: `+1 ${base.kit ? "kit" : "unidade"} ${UPSELL_OFFER.pct}% OFF`,
       };
-    const o = p === "seguro" ? SHIPPING_INSURANCE : EXPRESS_SHIPPING;
+    const o =
+      p === "palmilha" ? INSOLE_OFFER : p === "seguro" ? SHIPPING_INSURANCE : EXPRESS_SHIPPING;
     return { product: p, title: o.gatewayName, price: o.price, label: o.name };
   });
   const total = Math.round(items.reduce((s, i) => s + i.price * 100, 0)) / 100;

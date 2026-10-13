@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { brl } from "@/lib/shipping";
 import { ORDER_BUMPS } from "@/lib/order-bump";
-import { EXPRESS_SHIPPING, SHIPPING_INSURANCE } from "@/lib/upsell";
+import { EXPRESS_SHIPPING, INSOLE_OFFER, SHIPPING_INSURANCE } from "@/lib/upsell";
 import { DEFAULT_PRICES, priceConfigSchema, type PriceConfig } from "@/lib/prices";
 import { getPrices, resetPrices, savePrices } from "@/lib/prices.functions";
 
@@ -33,6 +33,10 @@ function toDraft(p: PriceConfig): Draft {
     tenis3: fmt(p.tenis.kit3),
     bump: fmt(p.bump.price),
     bumpde: fmt(p.bump.compareAt),
+    bump2: fmt((p.bump2 ?? DEFAULT_PRICES.bump2)?.price),
+    bump2de: fmt((p.bump2 ?? DEFAULT_PRICES.bump2)?.compareAt),
+    palmilha: fmt((p.palmilha ?? DEFAULT_PRICES.palmilha)?.price),
+    palmilhade: fmt((p.palmilha ?? DEFAULT_PRICES.palmilha)?.compareAt),
     upsellPct: String(p.upsellPct),
     seguro: fmt(p.seguro),
     expresso: fmt(p.expresso),
@@ -46,6 +50,8 @@ function fromDraft(d: Draft) {
     kit: n("kit") ?? NaN,
     tenis: { price: n("tenis") ?? NaN, kit2: n("tenis2") ?? NaN, kit3: n("tenis3") ?? NaN },
     bump: offer("bump", "bumpde"),
+    bump2: offer("bump2", "bump2de"),
+    palmilha: offer("palmilha", "palmilhade"),
     upsellPct: Number((d["upsellPct"] ?? "").replace(/\D/g, "")) || NaN,
     seguro: n("seguro") ?? NaN,
     expresso: n("expresso") ?? NaN,
@@ -121,6 +127,7 @@ export function PricesTab({ password }: { password: string }) {
   };
 
   const bump = ORDER_BUMPS[0];
+  const bump2 = ORDER_BUMPS[1];
   return (
     <div className="space-y-6">
       <div>
@@ -184,6 +191,17 @@ export function PricesTab({ password }: { password: string }) {
               fallback={DEFAULT_PRICES.bump}
             />
           )}
+          {bump2 && (
+            <Row
+              title="Oferta do checkout 2 (order bump)"
+              sub={bump2.fullName}
+              price={draft.bump2!}
+              de={draft.bump2de!}
+              onPrice={set("bump2")}
+              onDe={set("bump2de")}
+              fallback={DEFAULT_PRICES.bump2!}
+            />
+          )}
           <div className="grid gap-3 border-b pb-4 md:grid-cols-[1fr_160px_160px_90px] md:items-end">
             <div>
               <div className="text-sm font-medium">Upsell depois da compra</div>
@@ -202,6 +220,15 @@ export function PricesTab({ password }: { password: string }) {
               />
             </label>
           </div>
+          <Row
+            title={INSOLE_OFFER.fullName}
+            sub="Oferecida na tela depois da compra"
+            price={draft.palmilha!}
+            de={draft.palmilhade!}
+            onPrice={set("palmilha")}
+            onDe={set("palmilhade")}
+            fallback={DEFAULT_PRICES.palmilha!}
+          />
           <Row
             title={SHIPPING_INSURANCE.name}
             sub="Oferecido na tela depois da compra"

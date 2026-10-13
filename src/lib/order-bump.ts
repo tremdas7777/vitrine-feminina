@@ -41,6 +41,23 @@ export const ORDER_BUMPS: readonly OrderBumpItem[] = [
     ],
     cta: "Sim! Quero o kit de 3 meias por + {preco}",
   },
+  {
+    id: "limpeza",
+    name: "Kit limpeza e impermeabilizante",
+    fullName: "Kit de limpeza e impermeabilizante para calçados",
+    gatewayName: "Pedido Vitrine Feminina",
+    price: 19.9,
+    compareAt: 34.9,
+    img: "/ofertas/kit-limpeza.svg",
+    question: "Mantenha seu calçado com cara de novo por muito mais tempo.",
+    body: "Shampoo de limpeza, escova macia e spray impermeabilizante: tira a sujeira sem desbotar e protege contra água e manchas. Ideal para tênis claros e tecidos. Leve agora, no mesmo envio.",
+    benefits: [
+      "Limpa tecido, couro sintético e solado",
+      "Impermeabilizante protege de água e manchas",
+      "Vai na mesma caixa, sem frete extra",
+    ],
+    cta: "Sim! Quero o kit de limpeza por + {preco}",
+  },
 ];
 
 /** Bumps escolhidos, na ordem do checkout (ids repetidos ou desconhecidos são ignorados). */

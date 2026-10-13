@@ -8,6 +8,7 @@ import type { OrderItem } from "@/lib/cart";
 import { isPaidStatus } from "@/lib/pix-status";
 import { fetchPixStatus } from "@/lib/pix-gateway.server";
 import { notifyPushcut, type PushcutResult } from "@/lib/pushcut.server";
+import { PHYSICAL_UPSELLS, type UpsellProduct } from "@/lib/upsell";
 
 export type StoredCustomer = {
   name: string;
@@ -28,7 +29,9 @@ export type StoredCustomer = {
   /** Id do pedido original quando este é um upsell pós-compra. */
   upsellOf?: string;
   /** Ofertas pós-compra desta cobrança (sem o campo = só o item extra). */
-  upsellItems?: ("kit" | "seguro" | "expresso")[];
+  upsellItems?: UpsellProduct[];
+  /** Upsell: ofertas físicas sem item do catálogo (ex.: palmilha), com o preço cobrado. */
+  extras?: { id: string; name: string; price: number }[];
   /** Código Pix copia-e-cola (guardado no upsell para reexibir sem cobrar de novo). */
   qrcode?: string;
   /** Forma de pagamento (pedidos antigos não têm: são Pix). */
@@ -288,7 +291,8 @@ export async function reportPaidOnce(
     const rastroDone =
       !!prev && (prev.ok || [401, 402, 403, 413, 415, 422].includes(prev.status ?? 0));
     const isUpsell = !!c.upsellOf;
-    const shipsKit = !isUpsell || (c.upsellItems ?? ["kit"]).includes("kit");
+    const upsellItems = c.upsellItems ?? ["kit"];
+    const shipsKit = !isUpsell || upsellItems.some((p) => PHYSICAL_UPSELLS.includes(p));
     const rastro = rastroDone
       ? prev
       : !shipsKit
@@ -310,6 +314,11 @@ export async function reportPaidOnce(
                   name: b.name,
                   quantity: 1,
                   price: b.price,
+                })),
+                ...(isUpsell && c.extras?.length ? c.extras : []).map((x) => ({
+                  name: x.name,
+                  quantity: 1,
+                  price: x.price,
                 })),
               ],
             });

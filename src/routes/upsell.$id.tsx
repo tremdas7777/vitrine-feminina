@@ -6,6 +6,7 @@ import { CircleCheck, Loader2, ShieldCheck } from "lucide-react";
 import { createUpsellCharge } from "@/lib/pix.functions";
 import { loadPixSession, savePixSession, type PixSession } from "@/lib/pix-session";
 import {
+  INSOLE_OFFER,
   SHIPPING_INSURANCE,
   UPSELL_OFFER,
   upsellBaseOf,
@@ -115,7 +116,7 @@ function Page() {
           Escolha o que adicionar ao seu pedido
         </h1>
         <p className="mt-2 text-center text-[14px] text-muted-foreground">
-          Marque uma ou as duas ofertas. Você paga tudo num Pix só.
+          Marque as ofertas que quiser. Você paga tudo num Pix só.
         </p>
 
         {base && (
@@ -152,6 +153,43 @@ function Page() {
             </p>
           </Offer>
         )}
+
+        <Offer checked={chosen.includes("palmilha")} onToggle={() => toggle("palmilha")}>
+          <div className="flex items-center gap-4">
+            <img
+              src={INSOLE_OFFER.img}
+              alt=""
+              width={80}
+              height={80}
+              className="h-20 w-20 shrink-0 rounded-lg border border-border bg-white object-cover"
+            />
+            <div className="min-w-0">
+              {INSOLE_OFFER.compareAt && (
+                <p className="text-[12px] font-bold uppercase tracking-wide text-[var(--ck-ok)]">
+                  Só nesta tela:{" "}
+                  {Math.round((1 - INSOLE_OFFER.price / INSOLE_OFFER.compareAt) * 100)}% OFF
+                </p>
+              )}
+              <p className="text-[15px] font-semibold">{INSOLE_OFFER.fullName}</p>
+              <div className="mt-1 flex flex-wrap items-baseline gap-x-2">
+                {INSOLE_OFFER.compareAt && (
+                  <span className="text-[13px] text-muted-foreground line-through">
+                    {brl(INSOLE_OFFER.compareAt)}
+                  </span>
+                )}
+                <span className="text-[20px] font-bold text-[var(--ck-ok)]">
+                  {brl(INSOLE_OFFER.price)}
+                </span>
+              </div>
+            </div>
+          </div>
+          <p className="mt-3 text-[13px] leading-relaxed text-muted-foreground">
+            Deixe seu calçado ainda mais confortável: o gel{" "}
+            <b className="text-foreground">absorve o impacto no calcanhar</b> e alivia o cansaço dos
+            pés no fim do dia. Pode ser recortada no seu número. Vai no mesmo envio, sem frete
+            extra.
+          </p>
+        </Offer>
 
         <Offer checked={chosen.includes("seguro")} onToggle={() => toggle("seguro")}>
           <div className="flex gap-3">

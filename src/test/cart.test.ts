@@ -169,3 +169,28 @@ describe("oferta do kit no frete", () => {
     expect(kitUpgradeFor(resolveCart([kit(tenis, 3)]))).toBeNull();
   });
 });
+
+describe("palmilha e kit de limpeza", () => {
+  afterEach(() => applyPrices(null));
+
+  it("palmilha entra no upsell com o preço do painel; kit de limpeza é o 2º bump", () => {
+    const cfg = structuredClone(DEFAULT_PRICES);
+    cfg.palmilha = { price: 12.9, compareAt: 24.9 };
+    cfg.bump2 = { price: 17.9, compareAt: null };
+    applyPrices(cfg);
+    const base = toOrderItem(resolveLine(one(tenis))!, "");
+    const sel = upsellSelection(base, ["palmilha", "kit"]);
+    expect(sel.products).toEqual(["kit", "palmilha"]);
+    expect(sel.items[1]!.price).toBe(12.9);
+    expect(ORDER_BUMPS[1]!.id).toBe("limpeza");
+    expect(bumpsTotal(["limpeza"])).toBe(17.9);
+  });
+
+  it("preços salvos antes destas ofertas continuam valendo", () => {
+    const { bump2: _b, palmilha: _p, ...old } = structuredClone(DEFAULT_PRICES);
+    const cfg = { ...old, kit: 89 };
+    const applied = applyPrices(cfg);
+    expect(applied.kit).toBe(89);
+    expect(applied.palmilha).toEqual(DEFAULT_PRICES.palmilha);
+  });
+});
