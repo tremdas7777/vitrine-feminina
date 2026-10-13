@@ -45,6 +45,8 @@ export type CapiUser = {
 export type CapiEvent = {
   eventName: string;
   eventId: string;
+  /** Só no teste do /admin (test_event_code). */
+  testCode?: string;
   url?: string;
   user: CapiUser;
   customData?: Record<string, unknown>;
@@ -83,7 +85,9 @@ export async function sendCapiEvent(ev: CapiEvent): Promise<{ ok: boolean; error
         },
       ],
     };
-    if (cfg.testCode) body["test_event_code"] = cfg.testCode;
+    // Código de teste só no botão "Enviar teste" do /admin: nos eventos reais ele faria as compras
+    // irem só para "Testar eventos", sem contar nos relatórios.
+    if (ev.testCode) body["test_event_code"] = ev.testCode;
     const res = await fetch(
       `https://graph.facebook.com/v21.0/${encodeURIComponent(cfg.pixelId)}/events?access_token=${encodeURIComponent(cfg.accessToken)}`,
       { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) },

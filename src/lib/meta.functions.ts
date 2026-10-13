@@ -55,10 +55,19 @@ export const testMetaAdmin = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => z.object({ password: z.string().min(1).max(200) }).parse(d))
   .handler(async ({ data }) => {
     assertAdmin(data.password);
+    // Sem código de teste, o Meta conta o evento como compra de verdade (venda falsa nos relatórios).
+    const cfg = await getMetaConfig();
+    if (!cfg.testCode)
+      return {
+        ok: false,
+        error:
+          "preencha o Código de teste (Gerenciador de Eventos > Testar eventos) e salve antes de testar. Sem ele o teste conta como venda real.",
+      };
     // Teste = compra paga (Purchase), igual ao que é enviado quando o Pix cai.
     return sendCapiEvent({
       eventName: "Purchase",
       eventId: `test-purchase-${Date.now()}`,
+      testCode: cfg.testCode,
       url: brand.siteUrl ? `${brand.siteUrl}/` : undefined,
       user: { ...reqMeta(), email: "maria.teste@example.com", name: "Maria Teste Silva" },
       customData: { value: 87.9, currency: "BRL", content_name: brand.name, content_type: "product" },

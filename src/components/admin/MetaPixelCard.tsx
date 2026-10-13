@@ -83,7 +83,7 @@ export function MetaPixelCard({ password }: MetaPixelCardProps) {
           <Input type="password" value={token} onChange={(e) => setToken(e.target.value)} placeholder={tokenHint ? "Deixe vazio para manter" : "EAA..."} autoComplete="off" />
         </label>
         <label className="text-xs text-muted-foreground space-y-1">
-          <span>Código de teste (opcional)</span>
+          <span>Código de teste (só para o botão Enviar teste)</span>
           <Input value={testCode} onChange={(e) => setTestCode(e.target.value)} placeholder="TEST12345" />
         </label>
         <div className="md:col-span-3 flex flex-wrap items-center gap-3">
