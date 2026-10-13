@@ -36,6 +36,13 @@
       "when": 1791427308874,
       "tag": "0004_pix_orders_report_result",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1791858913657,
+      "tag": "0005_verify_store_migrations_applied",
+      "breakpoints": true
     }
   ]
 }

@@ -1,0 +1,1 @@
+COMMENT ON TABLE public.pix_orders IS 'Pedidos Pix da Vitrine Feminina; estrutura criada pelas migrações existentes da loja.';
