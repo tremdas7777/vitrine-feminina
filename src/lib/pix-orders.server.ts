@@ -8,7 +8,7 @@ import type { OrderItem } from "@/lib/cart";
 import { isPaidStatus } from "@/lib/pix-status";
 import { fetchPixStatus } from "@/lib/pix-gateway.server";
 import { notifyPushcut, type PushcutResult } from "@/lib/pushcut.server";
-import { PHYSICAL_UPSELLS, type UpsellProduct } from "@/lib/upsell";
+import { PHYSICAL_UPSELLS, UPSELL_META_EVENT, type UpsellProduct } from "@/lib/upsell";
 
 export type StoredCustomer = {
   name: string;
@@ -259,11 +259,14 @@ export async function reportPaidOnce(
           utm: o.utm ?? {},
           paymentMethod: c.method === "card" ? "credit_card" : "pix",
         });
+    // Meta: uma compra por pedido. As ofertas pós-compra (+1 igual, palmilha, seguro, expresso) vão
+    // como evento próprio, com o id do pedido principal, para não somar compras no Gerenciador.
+    const metaEvent = c.upsellOf ? UPSELL_META_EVENT : "Purchase";
     const meta = done.meta?.ok
       ? done.meta
       : await sendCapiEvent({
-          eventName: "Purchase",
-          eventId: `purchase-${id}`,
+          eventName: metaEvent,
+          eventId: `${c.upsellOf ? "upsell" : "purchase"}-${id}`,
           url: extra?.url,
           user: {
             email: c.email,
@@ -281,7 +284,7 @@ export async function reportPaidOnce(
             content_name: productName,
             content_ids: c.items?.length ? c.items.map((i) => i.slug) : [o.bundle_id],
             content_type: "product",
-            order_id: id,
+            order_id: c.upsellOf ?? id,
           },
         });
     // Rastreio (Rotasync): pedido principal e upsell com item extra viram envios próprios (o pedido

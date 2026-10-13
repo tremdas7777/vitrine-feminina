@@ -14,6 +14,12 @@ export const UPSELL_OFFER = {
   pct: 40,
 };
 
+/**
+ * Evento do Meta para as ofertas pós-compra pagas. Não é "Purchase": o Meta conta uma compra por
+ * pedido (a do pedido principal) e o valor das ofertas fica neste evento à parte.
+ */
+export const UPSELL_META_EVENT = "UpsellPurchase";
+
 /** Nome enviado ao gateway na cobrança do upsell (genérico). */
 export const UPSELL_GATEWAY_NAME = "Pedido Vitrine Feminina";
 

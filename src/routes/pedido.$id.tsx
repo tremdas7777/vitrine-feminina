@@ -85,7 +85,8 @@ function Page() {
     const value = (session?.amount ?? 0) / 100;
     const w = window as DataLayerWindow;
     try {
-      metaPurchaseBrowser(id, value, session?.bundleName);
+      // Oferta pós-compra paga não é outra compra no Meta: o servidor envia como evento à parte.
+      if (!session?.isUpsell) metaPurchaseBrowser(id, value, session?.bundleName);
       w.ttq?.track("CompletePayment", { value, currency: "BRL" });
       w.dataLayer?.push({ event: "purchase", currency: "BRL", value });
     } catch {
