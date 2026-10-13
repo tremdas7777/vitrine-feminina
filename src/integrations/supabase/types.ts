@@ -14,7 +14,153 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      funnel_events: {
+        Row: {
+          bundle_id: string | null
+          bundle_name: string | null
+          created_at: string
+          event_type: string
+          id: string
+          metadata: Json | null
+          path: string | null
+          referrer: string | null
+          session_id: string
+          user_agent: string | null
+          utm_campaign: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          value: number | null
+        }
+        Insert: {
+          bundle_id?: string | null
+          bundle_name?: string | null
+          created_at?: string
+          event_type: string
+          id?: string
+          metadata?: Json | null
+          path?: string | null
+          referrer?: string | null
+          session_id: string
+          user_agent?: string | null
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          value?: number | null
+        }
+        Update: {
+          bundle_id?: string | null
+          bundle_name?: string | null
+          created_at?: string
+          event_type?: string
+          id?: string
+          metadata?: Json | null
+          path?: string | null
+          referrer?: string | null
+          session_id?: string
+          user_agent?: string | null
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          value?: number | null
+        }
+        Relationships: []
+      }
+      pix_orders: {
+        Row: {
+          amount_cents: number
+          bundle_id: string
+          bundle_name: string
+          created_at: string
+          customer: Json
+          fbc: string | null
+          fbp: string | null
+          id: string
+          ip: string | null
+          paid_reported_at: string | null
+          report_result: Json | null
+          status: string
+          ua: string | null
+          updated_at: string
+          url: string | null
+          utm: Json | null
+        }
+        Insert: {
+          amount_cents: number
+          bundle_id: string
+          bundle_name: string
+          created_at?: string
+          customer: Json
+          fbc?: string | null
+          fbp?: string | null
+          id: string
+          ip?: string | null
+          paid_reported_at?: string | null
+          report_result?: Json | null
+          status?: string
+          ua?: string | null
+          updated_at?: string
+          url?: string | null
+          utm?: Json | null
+        }
+        Update: {
+          amount_cents?: number
+          bundle_id?: string
+          bundle_name?: string
+          created_at?: string
+          customer?: Json
+          fbc?: string | null
+          fbp?: string | null
+          id?: string
+          ip?: string | null
+          paid_reported_at?: string | null
+          report_result?: Json | null
+          status?: string
+          ua?: string | null
+          updated_at?: string
+          url?: string | null
+          utm?: Json | null
+        }
+        Relationships: []
+      }
+      private_settings: {
+        Row: {
+          created_at: string
+          key: string
+          updated_at: string
+          value: string | null
+        }
+        Insert: {
+          created_at?: string
+          key: string
+          updated_at?: string
+          value?: string | null
+        }
+        Update: {
+          created_at?: string
+          key?: string
+          updated_at?: string
+          value?: string | null
+        }
+        Relationships: []
+      }
+      site_settings: {
+        Row: {
+          key: string
+          updated_at: string
+          value: Json
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          value: Json
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          value?: Json
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
