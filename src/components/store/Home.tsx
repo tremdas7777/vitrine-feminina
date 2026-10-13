@@ -17,7 +17,7 @@ import {
   sortProducts,
 } from "@/lib/catalog";
 import { brl, FREE_SHIPPING_MIN } from "@/lib/shipping";
-import { ChevL, ChevR } from "./icons";
+import { ChevL, ChevR, IconBadgeCheck, IconGift, IconLock, IconTruck } from "./icons";
 import { ProductCard, Rail, SectionHead } from "./ProductCard";
 
 function Hero() {
@@ -124,25 +124,33 @@ export function Home() {
       <Hero />
       <div className="perks container">
         <div>
-          <span>🔒</span>
+          <span>
+            <IconLock />
+          </span>
           <p>
             <b>Compra segura</b>Pix com aprovação na hora
           </p>
         </div>
         <div>
-          <span>✅</span>
+          <span>
+            <IconBadgeCheck />
+          </span>
           <p>
             <b>Marcas originais</b>Beira Rio, Modare, Petite Jolie…
           </p>
         </div>
         <div>
-          <span>🎁</span>
+          <span>
+            <IconGift />
+          </span>
           <p>
             <b>{brand.coupon.pct}% OFF</b>na 1ª compra: {brand.coupon.code}
           </p>
         </div>
         <div>
-          <span>🚚</span>
+          <span>
+            <IconTruck />
+          </span>
           <p>
             <b>Frete grátis</b>acima de {brl(FREE_SHIPPING_MIN)}
           </p>

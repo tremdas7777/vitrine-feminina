@@ -24,7 +24,7 @@ import {
 } from "@/lib/catalog";
 import { metaTrack } from "@/lib/meta-pixel";
 import { brl } from "@/lib/shipping";
-import { ChevL, ChevR } from "./icons";
+import { ChevL, ChevR, IconBell, IconLock } from "./icons";
 import { PriceTag, Rail, SectionHead } from "./ProductCard";
 
 export type ProductTexts = { short: string; desc: string } | null;
@@ -413,13 +413,17 @@ export function ProductPage({ p, texts }: { p: Product; texts: ProductTexts }) {
               </div>
             ) : (
               <div className="pinfo__note">
-                <span>🔔</span>
+                <span>
+                  <IconBell />
+                </span>
                 <span>Este modelo esgotou. Veja os modelos parecidos logo abaixo.</span>
               </div>
             )}
 
             <div className="pinfo__note">
-              <span>🔒</span>
+              <span>
+                <IconLock />
+              </span>
               <span>
                 Compra 100% segura com Pix — aprovação na hora.
                 {promo

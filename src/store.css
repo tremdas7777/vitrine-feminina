@@ -124,7 +124,8 @@ body.lock { overflow: hidden; }
 .vf .perks { display: grid; grid-template-columns: repeat(4, 1fr); border-bottom: 1px solid var(--line); }
 .vf .perks div { display: flex; gap: 12px; align-items: center; padding: 18px 20px; font-size: 13.5px; color: var(--ink-2); }
 .vf .perks div + div { border-left: 1px solid var(--line); }
-.vf .perks span { font-size: 22px; }
+.vf .perks span { display: grid; place-items: center; flex-shrink: 0; width: 42px; height: 42px; border-radius: 50%; background: var(--rose-50); color: var(--rose-600); }
+.vf .perks span svg { width: 21px; height: 21px; }
 .vf .perks p { margin: 0; }
 .vf .perks b { display: block; color: var(--ink); }
 .vf .section { padding: 56px 0; }
@@ -328,7 +329,8 @@ body.lock { overflow: hidden; }
 .vf .footer { background: var(--ink); color: #e9dde1; margin-top: 0; }
 .vf .footer__perks { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; padding-top: 40px; padding-bottom: 36px; border-bottom: 1px solid rgba(255,255,255,.1); }
 .vf .footer__perks div { display: grid; grid-template-columns: 34px 1fr; column-gap: 10px; }
-.vf .footer__perks span { grid-row: span 2; font-size: 24px; }
+.vf .footer__perks span { grid-row: span 2; color: var(--rose-300); padding-top: 2px; }
+.vf .footer__perks span svg { width: 26px; height: 26px; }
 .vf .footer__perks small { color: #b9a8ae; }
 .vf .footer__cols { display: grid; grid-template-columns: 1.4fr repeat(4, 1fr); gap: 30px; padding-top: 40px; padding-bottom: 40px; }
 .vf .footer__cols h5 { margin: 0 0 14px; font-size: 12.5px; letter-spacing: .14em; text-transform: uppercase; color: #fff; }
@@ -473,6 +475,9 @@ body.lock { overflow: hidden; }
 .vf .modes--3 .mode span { font-size: 18px; }
 .vf .buy__add { grid-column: 1 / -1; }
 .vf .pinfo__note + .pinfo__note { margin-top: 10px; }
+.vf .pinfo__note > span:first-child { flex-shrink: 0; color: var(--rose-600); }
+.vf .pinfo__note > span:first-child svg { width: 19px; height: 19px; }
+.vf .topbar svg { width: 15px; height: 15px; vertical-align: -3px; margin-right: 4px; }
 @media (max-width: 860px) {
   .vf .modes--3 { gap: 8px; }
   .vf .modes--3 .mode { padding: 12px 8px; }

@@ -17,7 +17,20 @@ import {
 } from "@/lib/catalog";
 import { couponDiscount, couponPct, lineKey } from "@/lib/cart";
 import { brl, FREE_SHIPPING_MIN } from "@/lib/shipping";
-import { IconBag, IconClose, IconHeart, IconMenu, IconSearch } from "./icons";
+import {
+  IconBadgeCheck,
+  IconBag,
+  IconClose,
+  IconGift,
+  IconHeart,
+  IconInstagram,
+  IconLock,
+  IconMenu,
+  IconSearch,
+  IconShoe,
+  IconTag,
+  IconTruck,
+} from "./icons";
 
 /** Nome curto da categoria no menu do computador. */
 const SHORT: Record<string, string> = {
@@ -443,7 +456,7 @@ function CartDrawer() {
             <p className="cart-foot__hint">
               {missing > 0
                 ? `Faltam ${brl(missing)} para o frete grátis.`
-                : "Você ganhou frete grátis! 🎉"}{" "}
+                : "Você ganhou frete grátis!"}{" "}
               Pagamento seguro via Pix.
             </p>
           </>
@@ -532,22 +545,30 @@ function Footer() {
     <footer className="footer">
       <div className="footer__perks container">
         <div>
-          <span>🔒</span>
+          <span>
+            <IconLock />
+          </span>
           <b>Compra 100% segura</b>
           <small>Pagamento via Pix com aprovação na hora</small>
         </div>
         <div>
-          <span>✅</span>
+          <span>
+            <IconBadgeCheck />
+          </span>
           <b>Produtos originais</b>
           <small>Revendedora das marcas que você ama</small>
         </div>
         <div>
-          <span>🎁</span>
+          <span>
+            <IconGift />
+          </span>
           <b>{brand.coupon.pct}% na 1ª compra</b>
           <small>Use o cupom {brand.coupon.code}</small>
         </div>
         <div>
-          <span>📸</span>
+          <span>
+            <IconInstagram />
+          </span>
           <b>@{brand.instagram.handle}</b>
           <small>Novidades toda semana no Instagram</small>
         </div>
@@ -639,16 +660,16 @@ export function StoreLayout({ children }: { children: ReactNode }) {
   const notes = (
     <>
       <span>
-        ✨ <b>{brand.coupon.pct}% OFF</b> na primeira compra com o cupom <b>{brand.coupon.code}</b>
+        <IconTag /> <b>{brand.coupon.pct}% OFF</b> na primeira compra com o cupom <b>{brand.coupon.code}</b>
       </span>
       {tenis && (
         <span>
-          👟 <b>Tênis: 1 por {brl(tenis.price)}</b> · 2 por {brl(tenis.kits[2] ?? 0)} · 3 por{" "}
+          <IconShoe /> <b>Tênis: 1 por {brl(tenis.price)}</b> · 2 por {brl(tenis.kits[2] ?? 0)} · 3 por{" "}
           {brl(tenis.kits[3] ?? 0)} — <b>frete grátis levando 2</b>
         </span>
       )}
       <span>
-        🚚 <b>Frete grátis</b> acima de {brl(FREE_SHIPPING_MIN)}
+        <IconTruck /> <b>Frete grátis</b> acima de {brl(FREE_SHIPPING_MIN)}
       </span>
     </>
   );
