@@ -1,7 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Check, PackageCheck, Truck } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
 import { loadPixSession, type PixSession } from "@/lib/pix-session";
+import { finalizeMetaPurchaseFn } from "@/lib/pix.functions";
+import { metaPurchaseBrowser } from "@/lib/meta-pixel";
 import { brl } from "@/components/checkout/parts";
 import { Pill, Shell } from "@/components/checkout/OrderShell";
 
@@ -37,6 +40,19 @@ function Page() {
         : [];
     setSessions({ main, extras });
   }, [id]);
+
+  // Fim do pós-compra: uma compra no Meta com o valor do pedido + ofertas pagas (servidor e pixel
+  // do navegador com o mesmo event_id e o mesmo valor).
+  const finalizeFn = useServerFn(finalizeMetaPurchaseFn);
+  const mainId = sessions.main?.id;
+  useEffect(() => {
+    if (!mainId) return;
+    finalizeFn({ data: { id: mainId } })
+      .then((r) => {
+        if (r) metaPurchaseBrowser(mainId, r.value, r.name);
+      })
+      .catch(() => undefined);
+  }, [mainId, finalizeFn]);
 
   const { main, extras } = sessions;
   const extra = extras.length > 0;

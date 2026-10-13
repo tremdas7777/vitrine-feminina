@@ -18,6 +18,8 @@ import {
   saveOrder,
   fetchGatewayStatus,
   reportPaidOnce,
+  finalizeMetaPurchase,
+  flushDueMetaPurchases,
   reportPendingToUtmify,
   getOrder,
   findUpsellOf,
@@ -318,5 +320,14 @@ export const getPixStatus = createServerFn({ method: "GET" })
         ua: h?.get("user-agent") ?? null,
       });
     }
+    await flushDueMetaPurchases();
     return { status, paid };
   });
+
+/**
+ * Fim do pós-compra (tela de obrigado): envia ao Meta a compra do pedido com o valor do pedido +
+ * ofertas pagas e devolve esse valor para o pixel do navegador usar o mesmo (mesmo event_id).
+ */
+export const finalizeMetaPurchaseFn = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => z.object({ id: z.string().regex(/^[\w-]{1,64}$/) }).parse(d))
+  .handler(async ({ data }) => finalizeMetaPurchase(data.id));

@@ -95,6 +95,9 @@ export type StoredOrder = {
   utm: UtmParams | null;
   fbp: string | null;
   fbc: string | null;
+  ip?: string | null;
+  ua?: string | null;
+  report_result?: unknown;
 };
 
 export async function getOrder(id: string): Promise<StoredOrder | null> {
@@ -259,34 +262,47 @@ export async function reportPaidOnce(
           utm: o.utm ?? {},
           paymentMethod: c.method === "card" ? "credit_card" : "pix",
         });
-    // Meta: uma compra por pedido. As ofertas pós-compra (+1 igual, palmilha, seguro, expresso) vão
-    // como evento próprio, com o id do pedido principal, para não somar compras no Gerenciador.
-    const metaEvent = c.upsellOf ? UPSELL_META_EVENT : "Purchase";
-    const meta = done.meta?.ok
-      ? done.meta
-      : await sendCapiEvent({
-          eventName: metaEvent,
-          eventId: `${c.upsellOf ? "upsell" : "purchase"}-${id}`,
+    // Meta: uma compra por pedido, com o valor do pedido + ofertas pós-compra pagas. A do pedido
+    // principal espera o fim do pós-compra (finalizeMetaPurchase); a oferta paga entra nessa soma.
+    // Oferta paga depois que a compra já foi enviada vai como evento à parte (não soma compra).
+    const user = {
+      fbp: extra?.fbp ?? o.fbp ?? null,
+      fbc: extra?.fbc ?? o.fbc ?? null,
+      ip: extra?.ip ?? o.ip ?? null,
+      ua: extra?.ua ?? o.ua ?? null,
+    };
+    let meta: Record<string, unknown> & { ok: boolean };
+    if (done.meta?.ok) meta = done.meta as typeof meta;
+    else if (!c.upsellOf) {
+      const pending: MetaPending = {
+        ok: true,
+        deferred: true,
+        until: Date.now() + META_HOLD_MS,
+        user,
+        url: extra?.url ?? null,
+      };
+      meta = pending;
+    } else {
+      const parent = await getOrder(c.upsellOf);
+      const pm = (parent?.report_result as { meta?: MetaPending & MetaSent } | null)?.meta;
+      // Compra do pedido principal ainda não enviada: esta oferta entra na soma dela.
+      if (!pm || pm.deferred) meta = { ok: true, skipped: "somado à compra do pedido principal" };
+      else if (pm.upsellIds?.includes(id)) meta = { ok: true, skipped: "já somado à compra" };
+      else
+        meta = await sendCapiEvent({
+          eventName: UPSELL_META_EVENT,
+          eventId: `upsell-${id}`,
           url: extra?.url,
-          user: {
-            email: c.email,
-            phone: c.phone,
-            name: c.name,
-            cpf: c.cpf,
-            fbp: extra?.fbp ?? o.fbp ?? null,
-            fbc: extra?.fbc ?? o.fbc ?? null,
-            ip: extra?.ip ?? o.ip ?? null,
-            ua: extra?.ua ?? o.ua ?? null,
-          },
+          user: { email: c.email, phone: c.phone, name: c.name, cpf: c.cpf, ...user },
           customData: {
             value: amount / 100,
             currency: "BRL",
             content_name: productName,
-            content_ids: c.items?.length ? c.items.map((i) => i.slug) : [o.bundle_id],
             content_type: "product",
-            order_id: c.upsellOf ?? id,
+            order_id: c.upsellOf,
           },
         });
+    }
     // Rastreio (Rotasync): pedido principal e upsell com item extra viram envios próprios (o pedido
     // principal já foi repassado quando o upsell é pago). Seguro e expresso não têm produto físico.
     // Se a API já respondeu de forma definitiva (sucesso, 422, 401, 402, 403), não reenvia.
@@ -347,5 +363,93 @@ export async function reportPaidOnce(
       .eq("id", id);
   } catch (e) {
     console.error("reportPaidOnce failed", e);
+  }
+}
+
+// ---------- Meta: compra única por pedido (pedido + ofertas pós-compra) ----------
+
+/** Quanto a compra do pedido principal espera o pós-compra antes de ir sozinha para o Meta. */
+export const META_HOLD_MS = 35 * 60 * 1000;
+
+type MetaUser = { fbp: string | null; fbc: string | null; ip: string | null; ua: string | null };
+type MetaPending = { ok: true; deferred: true; until: number; user: MetaUser; url: string | null };
+type MetaSent = { ok: boolean; sentAt?: string; value?: number; upsellIds?: string[] };
+
+/**
+ * Envia ao Meta a compra (Purchase) do pedido principal com o valor do pedido + ofertas pós-compra
+ * já pagas. Idempotente: se já foi enviada, só devolve o valor. O event_id é o mesmo do navegador
+ * (purchase-<id>), então o Meta conta uma compra só.
+ */
+export async function finalizeMetaPurchase(
+  parentId: string,
+): Promise<{ value: number; name: string } | null> {
+  const db = await admin();
+  const parent = await getOrder(parentId);
+  if (!parent || parent.customer?.upsellOf || parent.status !== "paid") return null;
+  const rr = (parent.report_result ?? {}) as Record<string, unknown> & {
+    meta?: Partial<MetaPending> & MetaSent;
+  };
+  const m = rr.meta;
+  const name = `${brand.name} - ${parent.bundle_name}`;
+  if (!m?.deferred) return m?.value ? { value: m.value, name } : null;
+
+  const { data } = await db
+    .from("pix_orders")
+    .select("id, amount_cents, status, customer")
+    .eq("customer->>upsellOf", parentId)
+    .eq("status", "paid");
+  const upsells = ((data ?? []) as Pick<StoredOrder, "id" | "amount_cents" | "customer">[]).filter(
+    (u) => !u.customer?.testOf,
+  );
+  const cents = parent.amount_cents + upsells.reduce((s, u) => s + u.amount_cents, 0);
+  const value = cents / 100;
+  const c = parent.customer;
+  const user = m.user ?? { fbp: parent.fbp, fbc: parent.fbc, ip: parent.ip, ua: parent.ua };
+  const result = await sendCapiEvent({
+    eventName: "Purchase",
+    eventId: `purchase-${parentId}`,
+    url: m.url ?? undefined,
+    user: { email: c.email, phone: c.phone, name: c.name, cpf: c.cpf, ...user },
+    customData: {
+      value,
+      currency: "BRL",
+      content_name: name,
+      content_ids: c.items?.length ? c.items.map((i) => i.slug) : [parent.bundle_id],
+      content_type: "product",
+      order_id: parentId,
+    },
+  });
+  const meta: Record<string, unknown> = result.ok
+    ? { ...result, sentAt: new Date().toISOString(), value, upsellIds: upsells.map((u) => u.id) }
+    : { ...m, lastError: result.error ?? "erro" }; // falhou: continua pendente para nova tentativa
+  await db
+    .from("pix_orders")
+    .update({ report_result: { ...rr, meta } })
+    .eq("id", parentId);
+  return result.ok ? { value, name } : null;
+}
+
+let lastFlush = 0;
+/**
+ * Compras do Meta que passaram do prazo de espera (cliente saiu no meio do pós-compra): envia.
+ * Roda junto com o webhook e a consulta de status, no máximo uma vez por minuto.
+ */
+export async function flushDueMetaPurchases(): Promise<void> {
+  if (Date.now() - lastFlush < 60_000) return;
+  lastFlush = Date.now();
+  try {
+    const db = await admin();
+    const { data } = await db
+      .from("pix_orders")
+      .select("id, report_result")
+      .eq("status", "paid")
+      .eq("report_result->meta->>deferred", "true")
+      .limit(50);
+    const due = ((data ?? []) as { id: string; report_result: { meta?: { until?: number } } }[])
+      .filter((r) => (r.report_result?.meta?.until ?? 0) <= Date.now())
+      .slice(0, 10);
+    for (const r of due) await finalizeMetaPurchase(r.id);
+  } catch (e) {
+    console.error("flushDueMetaPurchases failed", e);
   }
 }

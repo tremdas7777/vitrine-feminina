@@ -5,7 +5,6 @@ import { useEffect, useMemo, useState } from "react";
 import { Copy, Loader2 } from "lucide-react";
 import pixWaiting from "@/assets/pix-waiting.png";
 import { getPixStatus } from "@/lib/pix.functions";
-import { metaPurchaseBrowser } from "@/lib/meta-pixel";
 import { loadPixSession, savePixSession, type PixSession } from "@/lib/pix-session";
 import { trackCheckoutClick } from "@/lib/analytics";
 import { useCart } from "@/hooks/useCart";
@@ -85,8 +84,7 @@ function Page() {
     const value = (session?.amount ?? 0) / 100;
     const w = window as DataLayerWindow;
     try {
-      // Oferta pós-compra paga não é outra compra no Meta: o servidor envia como evento à parte.
-      if (!session?.isUpsell) metaPurchaseBrowser(id, value, session?.bundleName);
+      // Purchase do Meta: sai na tela de obrigado, com o valor do pedido + ofertas pós-compra.
       w.ttq?.track("CompletePayment", { value, currency: "BRL" });
       w.dataLayer?.push({ event: "purchase", currency: "BRL", value });
     } catch {
