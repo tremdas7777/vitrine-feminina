@@ -1,4 +1,4 @@
-// Gateway do Pix escolhido no /admin: SagacePay (padrão), PixGate ou MagicPay. Somente servidor.
+// Gateway do Pix escolhido no /admin: PixGate (padrão), SagacePay ou MagicPay. Somente servidor.
 // A escolha vale para os próximos Pix. Cada pedido guarda no id qual gateway gerou o Pix
 // (PixGate "pg_", MagicPay "mp_", SagacePay sem prefixo), então a consulta de status e o webhook
 // continuam no gateway certo mesmo depois de uma troca.
@@ -27,7 +27,7 @@ export const MAGICPAY_ORDER_PREFIX = "mp_";
 export const isMagicpayOrderId = (id: string) => id.startsWith(MAGICPAY_ORDER_PREFIX);
 
 const SETTING = "pix_gateway";
-const DEFAULT_GATEWAY: PixGateway = "sagacepay";
+const DEFAULT_GATEWAY: PixGateway = "pixgate";
 
 export type PixCustomer = { name: string; email: string; phone: string; cpf: string };
 
@@ -64,7 +64,7 @@ async function configured(): Promise<Record<PixGateway, boolean>> {
 }
 
 /**
- * Gateway que gera os próximos Pix: o escolhido no /admin (padrão: SagacePay). Se o escolhido
+ * Gateway que gera os próximos Pix: o escolhido no /admin (padrão: PixGate). Se o escolhido
  * estiver sem chave e outro tiver, usa o outro para o checkout não parar.
  */
 export async function getPixGatewayState(): Promise<{

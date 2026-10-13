@@ -118,7 +118,7 @@ export function PixGatewayCard({ password }: { password: string }) {
           <div>
             <div className="font-medium">Gateway do Pix</div>
             <div className="text-xs text-muted-foreground">
-              Escolha quem gera os próximos Pix: SagacePay (padrão), PixGate ou MagicPay. A troca
+              Escolha quem gera os próximos Pix: PixGate (padrão), SagacePay ou MagicPay. A troca
               vale na hora; pedidos já gerados continuam sendo confirmados pelo gateway em que foram
               criados.
             </div>

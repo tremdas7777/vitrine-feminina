@@ -5,7 +5,7 @@ CardioMed: painel `/admin` com pedidos, lucro, checkouts abandonados, preços e 
 Pix com cupom, order bump, upsell pós-compra, seguro e envio expresso; UTMify, Meta (pixel + API de
 Conversões), Pushcut e Rotasync.
 
-**Pagamento: Pix, pela SagacePay, PixGate ou MagicPay.** No `/admin` → Integrações você escolhe
+**Pagamento: Pix, pela PixGate (padrão), SagacePay ou MagicPay.** No `/admin` → Integrações você escolhe
 qual gera os próximos Pix. Cada pedido guarda em qual gateway nasceu, então status, webhook
 (`/api/public/pix-webhook`), upsell, envio expresso e relatórios consultam sempre o gateway certo.
 
