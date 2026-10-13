@@ -13,6 +13,7 @@ import {
   cartSummary,
   couponDiscount,
   freeShippingFor,
+  kitUpgradeFor,
   resolveCart,
   resolveLine,
   type CartLine,
@@ -150,5 +151,21 @@ describe("ofertas", () => {
     expect(sel.products).toEqual(["kit", "seguro"]);
     expect(sel.items[0]!.price).toBe(49.5);
     expect(upsellSelection(null, ["kit"]).products).toEqual([]);
+  });
+});
+
+describe("oferta do kit no frete", () => {
+  it("1 tênis avulso: oferece o kit de 3, que libera o frete grátis", () => {
+    const lines = resolveCart([one(tenis)]);
+    const up = kitUpgradeFor(lines);
+    expect(up?.from.product.slug).toBe(tenis.slug);
+    expect(up?.units).toBe(3);
+    expect(up?.price).toBe(kitPriceOf(tenis, 3));
+    expect(up?.extra).toBe(Math.round((kitPriceOf(tenis, 3) - priceOf(tenis)) * 100) / 100);
+  });
+
+  it("não oferece quando o frete já é grátis", () => {
+    expect(kitUpgradeFor(resolveCart([one(tenis, 2)]))).toBeNull();
+    expect(kitUpgradeFor(resolveCart([kit(tenis, 3)]))).toBeNull();
   });
 });

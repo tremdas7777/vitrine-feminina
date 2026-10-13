@@ -123,6 +123,46 @@ export function freeShippingFor(products: number, lines: readonly ResolvedLine[]
   });
 }
 
+/** Oferta do checkout: trocar uma linha avulsa pelo kit de KIT_UNITS e ganhar o frete grátis. */
+export type KitUpgrade = {
+  /** Linha avulsa que vira kit. */
+  from: ResolvedLine;
+  units: number;
+  /** Preço do kit inteiro. */
+  price: number;
+  /** Quanto a mais o cliente paga em relação à linha atual. */
+  extra: number;
+};
+
+/**
+ * Primeira linha avulsa (com menos de KIT_UNITS peças) que, trocada pelo kit de KIT_UNITS, libera o
+ * frete grátis. null se o frete já é grátis ou se nenhuma troca resolve. `extras` = order bumps.
+ */
+export function kitUpgradeFor(lines: readonly ResolvedLine[], extras = 0): KitUpgrade | null {
+  if (freeShippingFor(cartSubtotal(lines) + extras, lines)) return null;
+  for (const from of lines) {
+    const { line, product } = from;
+    if (line.kit || line.qty >= KIT_UNITS || !kitSizesOf(product).includes(KIT_UNITS)) continue;
+    const v: Variant = { color: line.color, size: line.size };
+    const kit = resolveLine({
+      slug: line.slug,
+      qty: 1,
+      kit: true,
+      units: Array.from({ length: KIT_UNITS }, () => v),
+    });
+    if (!kit) continue;
+    const next = lines.map((l) => (l === from ? kit : l));
+    if (!freeShippingFor(cartSubtotal(next) + extras, next)) continue;
+    return {
+      from,
+      units: KIT_UNITS,
+      price: kit.unitPrice,
+      extra: round2(kit.unitPrice - from.total),
+    };
+  }
+  return null;
+}
+
 /** Resumo curto do pedido (coluna "Plano" do painel, UTMify e Meta). */
 export function cartSummary(lines: readonly ResolvedLine[]) {
   const first = lines[0];

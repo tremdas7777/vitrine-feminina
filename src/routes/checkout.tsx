@@ -5,7 +5,16 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Loader2 } from "lucide-react";
 import { BrandLogo } from "@/components/site/BrandLogo";
 import { FREE_SHIPPING_LABEL } from "@/lib/shipping";
-import { cartSummary, couponDiscount, couponPct, freeShippingFor, toOrderItem } from "@/lib/cart";
+import {
+  cartSummary,
+  couponDiscount,
+  couponPct,
+  freeShippingFor,
+  kitUpgradeFor,
+  lineKey,
+  toOrderItem,
+  type CartLine,
+} from "@/lib/cart";
 import { imgSmall } from "@/lib/catalog";
 import { useCart } from "@/hooks/useCart";
 import { brand } from "@/lib/brand";
@@ -29,6 +38,7 @@ import {
 import { SummaryDesktop, SummaryMobile } from "@/components/checkout/Summary";
 import { OrderBump } from "@/components/checkout/OrderBump";
 import { FreeShippingProgress } from "@/components/checkout/FreeShippingProgress";
+import { KitUpgradeOffer } from "@/components/checkout/KitUpgradeOffer";
 import { ORDER_BUMPS, bumpsTotal, getBumps, type BumpId } from "@/lib/order-bump";
 
 export const Route = createFileRoute("/checkout")({
@@ -185,6 +195,14 @@ function Checkout() {
     if (freeEligible && !wasEligible.current) setFrete("gratis");
     wasEligible.current = freeEligible;
   }, [freeEligible, frete]);
+  // Falta valor para o frete grátis: oferece trocar o item avulso pelo kit de 3 (que libera o frete).
+  const kitOffer = kitUpgradeFor(cart.resolved, bumpsTotal(bumps));
+  const acceptKit = (kit: CartLine) => {
+    if (!kitOffer) return;
+    cart.remove(lineKey(kitOffer.from.line));
+    cart.add(kit);
+    metaTrack("AddToCart", { value: kitOffer.price, contentName: kitOffer.from.product.name });
+  };
   const createFn = useServerFn(createPixCharge);
   const stepFn = useServerFn(trackCheckoutStep);
 
@@ -457,6 +475,13 @@ function Checkout() {
           />
           <p className="pt-2 text-base font-medium">Escolha o frete:</p>
           <FreeShippingProgress subtotal={subtotal} free={freeEligible} />
+          {kitOffer && (
+            <KitUpgradeOffer
+              key={lineKey(kitOffer.from.line)}
+              offer={kitOffer}
+              onAccept={acceptKit}
+            />
+          )}
           {FRETES.filter((f) => f.id !== "gratis" || freeEligible).map(
             ({ id: v, name: t, eta: d, price }) => {
               const p = price ? brl(price) : "Grátis";
